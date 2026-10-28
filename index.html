@@ -1,47 +1,1415 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mojitos Bar - Lotería</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#e30613">
+<title>Action Timer | Plaza de Armas</title>
+
+<style>
+:root {
+  --rojo: #0eb9ec;
+  --fondo: #f3f4f6;
+  --texto: #202124;
+  --verde: #168447;
+  --naranja: #b96b00;
+  --borde: #e1e3e7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+}
+
+header {
+  background: var(--rojo);
+  color: white;
+  padding: 18px;
+}
+
+.cabecera {
+  max-width: 1100px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  font-size: 23px;
+  font-weight: 900;
+}
+
+.logo small {
+  display: block;
+  font-size: 12px;
+  font-weight: normal;
+  margin-top: 5px;
+}
+
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 16px;
+}
+
+.aviso {
+  padding: 13px;
+  background: #fff5d8;
+  border: 1px solid #eed28b;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.estadisticas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.estadistica {
+  background: white;
+  padding: 15px;
+  border-radius: 13px;
+  border: 1px solid var(--borde);
+}
+
+.estadistica span {
+  display: block;
+  color: #666;
+  font-size: 12px;
+}
+
+.estadistica strong {
+  display: block;
+  font-size: 26px;
+  margin-top: 6px;
+}
+
+.titulo-seccion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 12px;
+}
+
+h2 {
+  font-size: 19px;
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 9px;
+  padding: 12px 14px;
+  font-weight: bold;
+}
+
+.btn-rojo {
+  background: var(--rojo);
+  color: white;
+}
+
+.btn-gris {
+  background: #eceef1;
+  color: #222;
+}
+
+.btn-peligro {
+  background: #ffe7e7;
+  color: #b00000;
+}
+
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.tarjeta {
+  background: white;
+  border: 1px solid var(--borde);
+  border-radius: 15px;
+  padding: 16px;
+  min-width: 0;
+}
+
+.tarjeta-superior {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.nombre {
+  font-size: 17px;
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+.detalle {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+  line-height: 1.5;
+}
+
+.etiqueta {
+  padding: 6px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.verde {
+  background: #e2f6e9;
+  color: #126b39;
+}
+
+.naranja {
+  background: #fff0d5;
+  color: #8a4b00;
+}
+
+.rojo {
+  background: #ffe4e5;
+  color: #b00009;
+}
+
+.gris {
+  background: #eceef1;
+  color: #555;
+}
+
+.cronometro {
+  font-size: 36px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  margin: 17px 0 5px;
+}
+
+.barra-fondo {
+  height: 7px;
+  background: #eceef1;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 13px 0;
+}
+
+.barra {
+  height: 100%;
+  width: 0%;
+  background: var(--verde);
+}
+
+.barra.naranja {
+  background: #e19a22;
+}
+
+.barra.rojo {
+  background: var(--rojo);
+}
+
+.acciones {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.acciones button {
+  width: 100%;
+}
+
+.vacio {
+  background: white;
+  border: 1px dashed #c7cbd1;
+  padding: 28px 15px;
+  text-align: center;
+  color: #666;
+  border-radius: 13px;
+  grid-column: 1 / -1;
+  line-height: 1.6;
+}
+
+.panel {
+  background: white;
+  border: 1px solid var(--borde);
+  border-radius: 15px;
+  padding: 15px;
+  margin-top: 22px;
+}
+
+.pestanas {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin: 15px 0;
+}
+
+.pestana {
+  background: #eceef1;
+  color: #444;
+}
+
+.pestana.activa {
+  background: #202124;
+  color: white;
+}
+
+.contenido-pestana.oculto {
+  display: none;
+}
+
+.campo {
+  margin-bottom: 13px;
+}
+
+.campo label {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccd0d7;
+  border-radius: 9px;
+  background: white;
+}
+
+.formulario {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.tabla-contenedor {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12px;
+}
+
+th,
+td {
+  padding: 10px 7px;
+  text-align: left;
+  border-bottom: 1px solid var(--borde);
+  white-space: nowrap;
+}
+
+th {
+  color: #666;
+}
+
+.fila-empleado,
+.fila-tiempo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--borde);
+}
+
+.pequeno {
+  font-size: 12px;
+  padding: 8px 10px;
+}
+
+.nota-final {
+  font-size: 11px;
+  color: #666;
+  line-height: 1.5;
+  margin: 20px 0;
+}
+
+dialog {
+  border: none;
+  border-radius: 15px;
+  width: min(440px, calc(100% - 25px));
+  padding: 0;
+  box-shadow: 0 15px 50px #0004;
+}
+
+dialog::backdrop {
+  background: #0008;
+}
+
+.modal-titulo {
+  background: var(--rojo);
+  color: white;
+  font-size: 19px;
+  font-weight: bold;
+  padding: 17px;
+}
+
+.modal-contenido {
+  padding: 18px;
+}
+
+.modal-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+@media (max-width: 650px) {
+  main {
+    padding: 12px;
+  }
+
+  .tarjetas {
+    grid-template-columns: 1fr;
+  }
+
+  .estadistica {
+    padding: 11px;
+  }
+
+  .estadistica strong {
+    font-size: 22px;
+  }
+
+  .estadistica span {
+    font-size: 11px;
+  }
+
+  .formulario {
+    grid-template-columns: 1fr;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .cronometro {
+    font-size: 37px;
+  }
+
+  .titulo-seccion {
+    align-items: flex-start;
+  }
+}
+</style>
 </head>
+
 <body>
 
-  <h1>Mojitos Bar 🍹 - Lotería</h1>
+<header>
+  <div class="cabecera">
+    <div class="logo">
+      ACTION TIMER
+      <small>Control de carros · Plaza de Armas</small>
+    </div>
+    <span>Equipo de mando</span>
+  </div>
+</header>
 
-  <button id="addTicketBtn">🧾 Introducir boleto de cliente</button>
+<main>
 
-  <div id="formContainer" class="hidden">
-    <input type="number" id="boleto" placeholder="Número de boleto (1-100)" min="1" max="100">
-    <input type="text" id="nombre" placeholder="Nombre del cliente">
-    <input type="text" id="telefono" placeholder="Teléfono">
-    <input type="text" id="serie" placeholder="Número de serie del boleto">
-    <button id="saveBtn">💾 Guardar</button>
+  <div class="aviso" id="estadoFirebase">Conectando con la base de datos compartida…</div>
+
+  <div class="estadisticas">
+    <div class="estadistica">
+      <span>Carros activos</span>
+      <strong id="totalActivos">0</strong>
+    </div>
+
+    <div class="estadistica">
+      <span>Terminados hoy</span>
+      <strong id="totalTerminados">0</strong>
+    </div>
+
+    <div class="estadistica">
+      <span>Fuera de tiempo</span>
+      <strong id="totalRetrasados">0</strong>
+    </div>
   </div>
 
-  <div id="adminLogin">
-    <h3>Panel de administrador</h3>
-    <input type="password" id="adminPass" placeholder="Contraseña">
-    <button id="loginBtn">Entrar</button>
+  <div class="titulo-seccion">
+    <h2>Carros en curso</h2>
+    <button class="btn-rojo" id="abrirNuevo">+ Nuevo carro</button>
   </div>
 
-  <div id="dataContainer" class="hidden">
-    <h2>📋 Lista de boletos vendidos</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>N°</th>
-          <th>Nombre</th>
-          <th>Teléfono</th>
-          <th>Serie</th>
-          <th>Fecha</th>
-        </tr>
-      </thead>
-      <tbody id="dataTable"></tbody>
-    </table>
+  <div class="tarjetas" id="listaActivos"></div>
+
+  <div class="panel">
+    <h2>Gestión del turno</h2>
+
+    <div class="pestanas">
+      <button class="pestana activa" data-pestana="historial">Historial</button>
+      <button class="pestana" data-pestana="resumen">Resumen diario</button>
+      <button class="pestana" data-pestana="configuracion">Empleados y tiempos</button>
+    </div>
+
+    <section id="historial" class="contenido-pestana">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <button class="btn-gris pequeno" id="exportar">Exportar CSV para Excel</button>
+        <button class="btn-peligro pequeno" id="borrarHistorial">Borrar historial</button>
+      </div>
+
+      <div class="tabla-contenedor">
+        <table>
+          <thead>
+            <tr>
+              <th>Empleado</th>
+              <th>Fecha</th>
+              <th>Inicio</th>
+              <th>Final</th>
+              <th>Duración</th>
+              <th>Límite</th>
+              <th>Resultado</th>
+            </tr>
+          </thead>
+          <tbody id="filasHistorial"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="resumen" class="contenido-pestana oculto">
+      <div class="estadisticas" style="margin-top:15px">
+        <div class="estadistica">
+          <span>Carros completados</span>
+          <strong id="resTotal">0</strong>
+        </div>
+        <div class="estadistica">
+          <span>Tiempo medio</span>
+          <strong id="resMedia">—</strong>
+        </div>
+        <div class="estadistica">
+          <span>Dentro del límite</span>
+          <strong id="resPuntuales">0</strong>
+        </div>
+      </div>
+
+      <div class="tabla-contenedor">
+        <table>
+          <thead>
+            <tr>
+              <th>Empleado</th>
+              <th>Carros</th>
+              <th>Media</th>
+              <th>Dentro del límite</th>
+            </tr>
+          </thead>
+          <tbody id="filasResumen"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="configuracion" class="contenido-pestana oculto">
+      <p class="detalle">
+        Aquí puedes cambiar los empleados y añadir los tiempos que aparecen
+        en las etiquetas de los carros. Puedes introducir horas o minutos.
+      </p>
+
+      <h3>Empleados</h3>
+
+      <form id="formEmpleado" class="formulario">
+        <div class="campo">
+          <label for="nombreEmpleado">Nombre del empleado</label>
+          <input id="nombreEmpleado" placeholder="Nombre y apellidos" required maxlength="60">
+        </div>
+
+        <div class="campo" style="align-self:end">
+          <button class="btn-rojo" style="width:100%">Añadir empleado</button>
+        </div>
+      </form>
+
+      <div id="listaEmpleados"></div>
+
+      <hr style="border:0;border-top:1px solid #ddd;margin:20px 0">
+
+      <h3>Tiempos de las etiquetas</h3>
+
+      <form id="formTiempo" class="formulario">
+        <div class="campo">
+          <label for="nombreTiempo">Nombre del tiempo</label>
+          <input id="nombreTiempo" placeholder="Ej. Carro estándar" required maxlength="60">
+        </div>
+
+        <div class="campo">
+          <label for="cantidadTiempo">Cantidad</label>
+          <input id="cantidadTiempo" type="number" min="1" step="1" placeholder="Ej. 1" required>
+        </div>
+
+        <div class="campo">
+          <label for="unidadTiempo">Unidad</label>
+          <select id="unidadTiempo">
+            <option value="minutos">Minutos</option>
+            <option value="horas">Horas</option>
+          </select>
+        </div>
+
+        <div class="campo" style="align-self:end">
+          <button class="btn-rojo" style="width:100%">Añadir tiempo</button>
+        </div>
+      </form>
+
+      <div id="listaTiempos"></div>
+    </section>
   </div>
 
-  <script type="module" src="script.js"></script>
+  <p class="nota-final">
+    Prototipo independiente y no oficial de Action. Antes de utilizarlo
+    en la tienda, debe configurarse el acceso autorizado y una base de
+    datos compartida, con las aprobaciones correspondientes.
+  </p>
+
+</main>
+
+<dialog id="modalNuevo">
+  <div class="modal-titulo">Iniciar un carro</div>
+
+  <div class="modal-contenido">
+    <form id="formNuevo">
+      <div class="campo">
+        <label for="selectorEmpleado">Empleado</label>
+        <select id="selectorEmpleado" required></select>
+      </div>
+
+
+<div class="campo">
+  <label>Tiempo indicado en la etiqueta</label>
+
+  <div style="display:flex; gap:10px;">
+    <div style="flex:1;">
+      <input
+        id="tiempoHoras"
+        type="number"
+        min="0"
+        step="1"
+        value="0"
+        placeholder="Horas"
+        required
+        style="width:100%; padding:12px; border:1px solid #ccd0d7; border-radius:9px;"
+      >
+      <small>Horas</small>
+    </div>
+
+    <div style="flex:1;">
+      <input
+        id="tiempoMinutos"
+        type="number"
+        min="0"
+        max="59"
+        step="1"
+        value="15"
+        placeholder="Minutos"
+        required
+        style="width:100%; padding:12px; border:1px solid #ccd0d7; border-radius:9px;"
+      >
+      <small>Minutos</small>
+    </div>
+  </div>
+
+  <p id="tiempoCalculado" style="font-size:13px; color:#168447; font-weight:bold;">
+    Tiempo total: 15 minutos
+  </p>
+</div>
+
+
+      <div class="campo">
+        <label for="notaCarro">Descripción opcional</label>
+        <input id="notaCarro" placeholder="Ej. Bebidas, alimentación...">
+      </div>
+
+      <div class="modal-acciones">
+        <button type="button" class="btn-gris" id="cancelarNuevo">Cancelar</button>
+        <button type="submit" class="btn-rojo">Iniciar cronómetro</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+import { getDatabase } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+import { ref, set, onValue } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
+
+// Configuración del proyecto Firebase action-dely.
+// Base de datos Realtime Database del proyecto action-dely.
+const firebaseConfig = {
+  apiKey: "AIzaSyCJB6t0_pu1CSP44mbgKcZDWFd_mAW5jW0",
+  authDomain: "action-dely.firebaseapp.com",
+  databaseURL: "https://action-dely-default-rtdb.firebaseio.com",
+  projectId: "action-dely",
+  storageBucket: "action-dely.firebasestorage.app",
+  messagingSenderId: "1035370540346",
+  appId: "1:1035370540346:web:c9c3a0423a7ddfe71a7403"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+const rutaDatos = ref(db, "actionTimer/datos");
+let sincronizacionLista = false;
+let aplicandoDatosRemotos = false;
+let escuchaIniciada = false;
+
+function mostrarEstadoFirebase(mensaje) {
+  const estado = document.getElementById("estadoFirebase");
+  if (estado) estado.textContent = mensaje;
+}
+
+
+const CLAVE = "action_timer_plaza_armas_v2";
+
+function datosIniciales() {
+  return {
+    empleados: [
+      "Adri",
+      "David",
+      "Alejandro",
+      "Maria",
+      "Mohamed",
+      "Fouzia",
+      "Carmen",
+      "Helia",
+      "Andrea",
+      "Samuel",
+      "Ari",
+      "Jonathan"
+    ],
+    tiempos: [
+      {id:"t15", nombre:"15 minutos", minutos:15},
+      {id:"t45", nombre:"45 minutos", minutos:45},
+      {id:"t60", nombre:"1 hora", minutos:60},
+      {id:"t90", nombre:"1 hora y 30 minutos", minutos:90}
+    ],
+    activos: [],
+    historial: []
+  };
+}
+
+function cargarDatos() {
+  try {
+    const guardado = localStorage.getItem(CLAVE);
+    if (!guardado) return datosIniciales();
+
+    const datos = JSON.parse(guardado);
+    if (!datos.empleados || !datos.tiempos ||
+        !datos.activos || !datos.historial) {
+      return datosIniciales();
+    }
+
+    // Corrige una sola vez las listas antiguas que tenían "Empleado 1", etc.
+    // Conserva los carros activos, el historial, los tiempos y los empleados personalizados.
+    const claveMigracion = CLAVE + "_nombres_reales_v1";
+    if (!localStorage.getItem(claveMigracion)) {
+      const nombresCorrectos = datosIniciales().empleados;
+      const listaGuardada = datos.empleados.map(nombre => String(nombre).trim());
+      const soloGenericos = listaGuardada.length > 0 &&
+        listaGuardada.every(nombre => /^empleado\s*\d+$/i.test(nombre));
+
+      if (soloGenericos) {
+        datos.empleados = [...nombresCorrectos];
+      } else {
+        // Quita nombres genéricos como "Empleado 1" y añade los nombres que falten.
+        datos.empleados = listaGuardada.filter(nombre =>
+          !/^empleado\s*\d+$/i.test(nombre)
+        );
+        nombresCorrectos.forEach(nombre => {
+          if (!datos.empleados.some(existente =>
+            existente.toLocaleLowerCase("es") === nombre.toLocaleLowerCase("es")
+          )) {
+            datos.empleados.push(nombre);
+          }
+        });
+      }
+
+      localStorage.setItem(CLAVE, JSON.stringify(datos));
+      localStorage.setItem(claveMigracion, "1");
+    }
+
+    return datos;
+  } catch (error) {
+    console.error("Error al cargar los datos guardados:", error);
+    return datosIniciales();
+  }
+}
+
+let datos = cargarDatos();
+
+const $ = id => document.getElementById(id);
+
+function guardar() {
+  localStorage.setItem(CLAVE, JSON.stringify(datos));
+  dibujar();
+  if (sincronizacionLista && auth.currentUser && !aplicandoDatosRemotos) {
+    set(rutaDatos, datos).catch(error => {
+      console.error("No se pudieron sincronizar los datos:", error);
+      mostrarEstadoFirebase("Sin conexión con Firebase. Los cambios están guardados solo en este dispositivo hasta recuperar la conexión.");
+    });
+  }
+}
+
+function escapar(texto) {
+  return String(texto ?? "").replace(/[&<>"']/g, caracter => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[caracter]);
+}
+
+function ahoraISO() {
+  return new Date().toISOString();
+}
+
+function fechaHoy() {
+  const d = new Date();
+  return d.getFullYear() + "-" +
+    String(d.getMonth()+1).padStart(2,"0") + "-" +
+    String(d.getDate()).padStart(2,"0");
+}
+
+function fechaBonita(fecha) {
+  return fecha ? new Date(fecha).toLocaleDateString("es-ES") : "—";
+}
+
+function horaBonita(fecha) {
+  return fecha ? new Date(fecha).toLocaleTimeString("es-ES", {
+    hour:"2-digit",
+    minute:"2-digit",
+    second:"2-digit"
+  }) : "—";
+}
+
+function duracion(segundos) {
+  segundos = Math.max(0, Math.floor(segundos));
+
+  const horas = Math.floor(segundos / 3600);
+  const minutos = Math.floor((segundos % 3600) / 60);
+  const seg = segundos % 60;
+
+  if (horas > 0) {
+    return String(horas).padStart(2,"0") + ":" +
+      String(minutos).padStart(2,"0") + ":" +
+      String(seg).padStart(2,"0");
+  }
+
+  return String(minutos).padStart(2,"0") + ":" +
+    String(seg).padStart(2,"0");
+}
+
+function tiempoTranscurrido(carro) {
+  return Math.max(0,
+    (Date.now() - new Date(carro.inicio).getTime()) / 1000
+  );
+}
+
+function estadoCarro(carro) {
+  const porcentaje = tiempoTranscurrido(carro) /
+    (carro.limiteMinutos * 60);
+
+  if (porcentaje >= 1) return "retrasado";
+  if (porcentaje >= 0.8) return "avisar";
+  return "correcto";
+}
+
+function nombreEstado(estado) {
+  if (estado === "retrasado") return "Tiempo superado";
+  if (estado === "avisar") return "Cerca del límite";
+  return "En tiempo";
+}
+
+function claseEstado(estado) {
+  if (estado === "retrasado") return "rojo";
+  if (estado === "avisar") return "naranja";
+  return "verde";
+}
+
+function dibujar() {
+  dibujarActivos();
+  dibujarHistorial();
+  dibujarResumen();
+  dibujarEmpleados();
+  dibujarTiempos();
+  actualizarSelectores();
+
+  $("totalActivos").textContent = datos.activos.length;
+
+  const terminadosHoy = datos.historial.filter(
+    carro => carro.fecha === fechaHoy()
+  );
+
+  $("totalTerminados").textContent = terminadosHoy.length;
+
+  $("totalRetrasados").textContent = datos.activos.filter(
+    carro => estadoCarro(carro) === "retrasado"
+  ).length;
+}
+
+function dibujarActivos() {
+  const contenedor = $("listaActivos");
+  contenedor.innerHTML = "";
+
+  if (datos.activos.length === 0) {
+    contenedor.innerHTML = `
+      <div class="vacio">
+        No hay carros activos.<br>
+        Pulsa «Nuevo carro» para comenzar.
+      </div>`;
+    return;
+  }
+
+  datos.activos.forEach(carro => {
+    const estado = estadoCarro(carro);
+    const transcurrido = tiempoTranscurrido(carro);
+    const limiteSegundos = carro.limiteMinutos * 60;
+    const restante = limiteSegundos - transcurrido;
+    const porcentaje = Math.min(
+      100,
+      transcurrido / limiteSegundos * 100
+    );
+
+    let textoRestante;
+
+    if (restante >= 0) {
+      textoRestante = duracion(restante);
+    } else {
+      textoRestante = "+" + duracion(Math.abs(restante));
+    }
+
+    const tarjeta = document.createElement("article");
+    tarjeta.className = "tarjeta";
+
+    tarjeta.innerHTML = `
+      <div class="tarjeta-superior">
+        <div>
+          <div class="nombre">${escapar(carro.empleado)}</div>
+          <div class="detalle">
+            ${escapar(carro.nota || carro.nombreTiempo)}<br>
+            Inicio: ${horaBonita(carro.inicio)}
+          </div>
+        </div>
+
+        <span class="etiqueta ${claseEstado(estado)}">
+          ${nombreEstado(estado)}
+        </span>
+      </div>
+
+      <div class="cronometro" data-cronometro="${carro.id}">
+        ${duracion(transcurrido)}
+      </div>
+
+      <div class="detalle">
+        Límite: ${duracion(limiteSegundos)}<br>
+        Tiempo restante: ${textoRestante}
+      </div>
+
+      <div class="barra-fondo">
+        <div class="barra ${claseEstado(estado)}"
+             style="width:${porcentaje}%"></div>
+      </div>
+
+      <div class="acciones">
+        <button class="btn-rojo"
+                data-finalizar="${carro.id}">
+          Finalizar carro
+        </button>
+      </div>
+    `;
+
+    contenedor.appendChild(tarjeta);
+  });
+
+  document.querySelectorAll("[data-finalizar]").forEach(boton => {
+    boton.onclick = () => finalizarCarro(boton.dataset.finalizar);
+  });
+}
+
+function finalizarCarro(id) {
+  const indice = datos.activos.findIndex(carro => carro.id === id);
+  if (indice < 0) return;
+
+  const carro = datos.activos.splice(indice, 1)[0];
+  const final = ahoraISO();
+
+  const segundos = Math.max(0, Math.round(
+    (new Date(final) - new Date(carro.inicio)) / 1000
+  ));
+
+  datos.historial.push({
+    ...carro,
+    final,
+    segundos,
+    fecha: fechaHoy()
+  });
+
+  guardar();
+}
+
+function dibujarHistorial() {
+  const tbody = $("filasHistorial");
+  tbody.innerHTML = "";
+
+  const filas = [...datos.historial].sort(
+    (a,b) => new Date(b.final) - new Date(a.final)
+  );
+
+  if (filas.length === 0) {
+    tbody.innerHTML =
+      '<tr><td colspan="7">Todavía no hay carros terminados.</td></tr>';
+    return;
+  }
+
+  filas.forEach(carro => {
+    const dentro = carro.segundos <= carro.limiteMinutos * 60;
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>
+        ${escapar(carro.empleado)}
+        <div class="detalle">${escapar(carro.nota || carro.nombreTiempo)}</div>
+      </td>
+      <td>${fechaBonita(carro.final)}</td>
+      <td>${horaBonita(carro.inicio)}</td>
+      <td>${horaBonita(carro.final)}</td>
+      <td><strong>${duracion(carro.segundos)}</strong></td>
+      <td>${duracion(carro.limiteMinutos * 60)}</td>
+      <td>
+        <span class="etiqueta ${dentro ? "verde" : "rojo"}">
+          ${dentro ? "En tiempo" : "Superado"}
+        </span>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+function dibujarResumen() {
+  const hoy = datos.historial.filter(
+    carro => carro.fecha === fechaHoy()
+  );
+
+  $("resTotal").textContent = hoy.length;
+
+  if (hoy.length === 0) {
+    $("resMedia").textContent = "—";
+  } else {
+    const media = hoy.reduce(
+      (total, carro) => total + carro.segundos, 0
+    ) / hoy.length;
+
+    $("resMedia").textContent = duracion(media);
+  }
+
+  $("resPuntuales").textContent = hoy.filter(
+    carro => carro.segundos <= carro.limiteMinutos * 60
+  ).length;
+
+  const empleados = [...new Set([
+    ...datos.empleados,
+    ...hoy.map(carro => carro.empleado)
+  ])];
+
+  $("filasResumen").innerHTML = "";
+
+  empleados.forEach(nombre => {
+    const carros = hoy.filter(carro => carro.empleado === nombre);
+
+    const media = carros.length
+      ? carros.reduce((s,c) => s + c.segundos, 0) / carros.length
+      : 0;
+
+    const puntuales = carros.filter(
+      carro => carro.segundos <= carro.limiteMinutos * 60
+    ).length;
+
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${escapar(nombre)}</td>
+      <td>${carros.length}</td>
+      <td>${carros.length ? duracion(media) : "—"}</td>
+      <td>${carros.length ? puntuales + "/" + carros.length : "—"}</td>
+    `;
+
+    $("filasResumen").appendChild(tr);
+  });
+}
+
+function dibujarEmpleados() {
+  const lista = $("listaEmpleados");
+  lista.innerHTML = "";
+
+  datos.empleados.forEach((nombre, indice) => {
+    const fila = document.createElement("div");
+    fila.className = "fila-empleado";
+
+    const ocupado = datos.activos.some(
+      carro => carro.empleado === nombre
+    );
+
+    fila.innerHTML = `
+      <span>${escapar(nombre)}</span>
+      <button class="btn-peligro pequeno"
+              data-borrar-empleado="${indice}"
+              ${ocupado ? "disabled" : ""}>
+        Eliminar
+      </button>
+    `;
+
+    lista.appendChild(fila);
+  });
+
+  document.querySelectorAll("[data-borrar-empleado]").forEach(boton => {
+    boton.onclick = () => {
+      const indice = Number(boton.dataset.borrarEmpleado);
+      const nombre = datos.empleados[indice];
+
+      if (datos.activos.some(c => c.empleado === nombre)) {
+        alert("Ese empleado tiene un carro activo.");
+        return;
+      }
+
+      if (confirm("¿Eliminar a " + nombre + "?")) {
+        datos.empleados.splice(indice, 1);
+        guardar();
+      }
+    };
+  });
+}
+
+function dibujarTiempos() {
+  const lista = $("listaTiempos");
+  lista.innerHTML = "";
+
+  datos.tiempos.forEach(tiempo => {
+    const fila = document.createElement("div");
+    fila.className = "fila-tiempo";
+
+    fila.innerHTML = `
+      <span>
+        ${escapar(tiempo.nombre)}
+        <strong> · ${duracion(tiempo.minutos * 60)}</strong>
+      </span>
+      <button class="btn-peligro pequeno"
+              data-borrar-tiempo="${tiempo.id}">
+        Eliminar
+      </button>
+    `;
+
+    lista.appendChild(fila);
+  });
+
+  document.querySelectorAll("[data-borrar-tiempo]").forEach(boton => {
+    boton.onclick = () => {
+      if (confirm("¿Eliminar este tiempo?")) {
+        datos.tiempos = datos.tiempos.filter(
+          t => t.id !== boton.dataset.borrarTiempo
+        );
+        guardar();
+      }
+    };
+  });
+}
+
+function actualizarSelectores() {
+  const empleado = $("selectorEmpleado");
+  const empleadosOcupados = datos.activos.map(c => c.empleado);
+
+  empleado.innerHTML =
+    '<option value="">Selecciona empleado</option>';
+
+  datos.empleados.forEach(nombre => {
+    const opcion = document.createElement("option");
+    opcion.value = nombre;
+    opcion.textContent = nombre;
+    opcion.disabled = empleadosOcupados.includes(nombre);
+    empleado.appendChild(opcion);
+  });
+}
+
+$("abrirNuevo").onclick = () => {
+  if (datos.empleados.length === 0) {
+    alert("Primero añade empleados en la pestaña de configuración.");
+    return;
+  }
+
+  actualizarSelectores();
+  $("modalNuevo").showModal();
+};
+
+$("cancelarNuevo").onclick = () => {
+  $("modalNuevo").close();
+};
+
+$("formNuevo").onsubmit = evento => {
+  evento.preventDefault();
+
+  const empleado = $("selectorEmpleado").value;
+
+  const horas = Number($("tiempoHoras").value);
+  const minutos = Number($("tiempoMinutos").value);
+
+  if (!empleado) {
+    alert("Selecciona un empleado.");
+    return;
+  }
+
+  if (
+    !Number.isInteger(horas) ||
+    !Number.isInteger(minutos) ||
+    horas < 0 ||
+    minutos < 0 ||
+    minutos > 59 ||
+    (horas === 0 && minutos === 0)
+  ) {
+    alert("Introduce un tiempo válido en horas y minutos.");
+    return;
+  }
+
+  if (datos.activos.some(c => c.empleado === empleado)) {
+    alert("Este empleado ya tiene un carro activo.");
+    return;
+  }
+
+  const totalMinutos = horas * 60 + minutos;
+
+  datos.activos.push({
+    id: Date.now().toString() + Math.random().toString(16).slice(2),
+    empleado: empleado,
+    nombreTiempo: horas > 0
+      ? horas + " h " + minutos + " min"
+      : minutos + " minutos",
+    limiteMinutos: totalMinutos,
+    inicio: ahoraISO(),
+    nota: $("notaCarro").value.trim()
+  });
+
+  $("notaCarro").value = "";
+  $("modalNuevo").close();
+
+  guardar();
+};
+
+
+$("formEmpleado").onsubmit = evento => {
+  evento.preventDefault();
+
+  const nombre = $("nombreEmpleado").value.trim();
+
+  if (!nombre) return;
+
+  if (datos.empleados.some(
+    n => n.toLowerCase() === nombre.toLowerCase()
+  )) {
+    alert("Ese empleado ya existe.");
+    return;
+  }
+
+  datos.empleados.push(nombre);
+  $("nombreEmpleado").value = "";
+  guardar();
+};
+
+$("formTiempo").onsubmit = evento => {
+  evento.preventDefault();
+
+  const nombre = $("nombreTiempo").value.trim();
+  const cantidad = Number($("cantidadTiempo").value);
+  const unidad = $("unidadTiempo").value;
+
+  if (!nombre || !Number.isInteger(cantidad) || cantidad < 1) {
+    alert("Introduce un nombre y una cantidad válida.");
+    return;
+  }
+
+  const minutos = unidad === "horas" ? cantidad * 60 : cantidad;
+
+  datos.tiempos.push({
+    id: Date.now().toString() + Math.random().toString(16).slice(2),
+    nombre,
+    minutos
+  });
+
+  $("nombreTiempo").value = "";
+  $("cantidadTiempo").value = "";
+  $("unidadTiempo").value = "minutos";
+
+  guardar();
+};
+
+document.querySelectorAll("[data-pestana]").forEach(boton => {
+  boton.onclick = () => {
+    document.querySelectorAll("[data-pestana]").forEach(b => {
+      b.classList.toggle("activa", b === boton);
+    });
+
+    document.querySelectorAll(".contenido-pestana").forEach(seccion => {
+      seccion.classList.toggle(
+        "oculto",
+        seccion.id !== boton.dataset.pestana
+      );
+    });
+  };
+});
+
+$("exportar").onclick = () => {
+  const cabeceras = [
+    "Empleado",
+    "Descripción",
+    "Fecha",
+    "Hora inicio",
+    "Hora final",
+    "Duración",
+    "Límite en minutos",
+    "Resultado"
+  ];
+
+  const filas = datos.historial.map(carro => [
+    carro.empleado,
+    carro.nota || carro.nombreTiempo,
+    fechaBonita(carro.final),
+    horaBonita(carro.inicio),
+    horaBonita(carro.final),
+    duracion(carro.segundos),
+    carro.limiteMinutos,
+    carro.segundos <= carro.limiteMinutos * 60
+      ? "En tiempo"
+      : "Superado"
+  ]);
+
+  const csv = [cabeceras, ...filas]
+    .map(fila => fila.map(valor =>
+      '"' + String(valor ?? "").replace(/"/g, '""') + '"'
+    ).join(";"))
+    .join("\r\n");
+
+  const archivo = new Blob(
+    ["\ufeff" + csv],
+    {type:"text/csv;charset=utf-8;"}
+  );
+
+  const enlace = document.createElement("a");
+  const url = URL.createObjectURL(archivo);
+
+  enlace.href = url;
+  enlace.download = "action-timer-historial.csv";
+  enlace.click();
+
+  URL.revokeObjectURL(url);
+};
+
+$("borrarHistorial").onclick = () => {
+  if (confirm("¿Seguro que quieres borrar todo el historial?")) {
+    datos.historial = [];
+    guardar();
+  }
+};
+
+// Actualizar cronómetros cada segundo sin reiniciar su hora de inicio.
+setInterval(() => {
+  document.querySelectorAll("[data-cronometro]").forEach(elemento => {
+    const carro = datos.activos.find(
+      c => c.id === elemento.dataset.cronometro
+    );
+
+    if (carro) {
+      elemento.textContent = duracion(tiempoTranscurrido(carro));
+    }
+  });
+
+  if (datos.activos.length > 0) {
+    dibujarActivos();
+
+    $("totalRetrasados").textContent = datos.activos.filter(
+      carro => estadoCarro(carro) === "retrasado"
+    ).length;
+  }
+}, 1000);
+
+function actualizarTiempoCalculado() {
+  const horas = Number($("tiempoHoras").value) || 0;
+  const minutos = Number($("tiempoMinutos").value) || 0;
+
+  $("tiempoCalculado").textContent =
+    `Tiempo total: ${horas} h y ${minutos} min`;
+}
+
+$("tiempoHoras").addEventListener("input", actualizarTiempoCalculado);
+$("tiempoMinutos").addEventListener("input", actualizarTiempoCalculado);
+actualizarTiempoCalculado();
+
+// Mostrar inmediatamente los datos locales mientras se conecta Firebase.
+dibujar();
+
+// Acceso anónimo: no requiere que cada compañero introduzca un correo.
+onAuthStateChanged(auth, usuario => {
+  if (!usuario) return;
+  if (escuchaIniciada) return;
+  escuchaIniciada = true;
+  mostrarEstadoFirebase("Conectado. Sincronizando datos…");
+
+  onValue(rutaDatos, snapshot => {
+    aplicandoDatosRemotos = true;
+    try {
+      if (snapshot.exists()) {
+        const remotos = snapshot.val();
+        if (remotos && Array.isArray(remotos.empleados) &&
+            Array.isArray(remotos.tiempos) && Array.isArray(remotos.activos) &&
+            Array.isArray(remotos.historial)) {
+          datos = remotos;
+          localStorage.setItem(CLAVE, JSON.stringify(datos));
+        }
+      } else {
+        // Primera conexión: subir los datos existentes en este navegador.
+        set(rutaDatos, datos).catch(error => {
+          console.error("No se pudieron inicializar los datos remotos:", error);
+          mostrarEstadoFirebase("No se pudieron guardar los datos en Firebase. Revisa las reglas de la base de datos.");
+        });
+      }
+      sincronizacionLista = true;
+      dibujar();
+      mostrarEstadoFirebase("Conectado y sincronizado en tiempo real.");
+    } finally {
+      aplicandoDatosRemotos = false;
+    }
+  }, error => {
+    console.error("Error al leer Firebase:", error);
+    mostrarEstadoFirebase("No se puede acceder a Firebase. Comprueba las reglas de seguridad.");
+  });
+});
+
+signInAnonymously(auth).catch(error => {
+  console.error("Error de acceso anónimo:", error);
+  mostrarEstadoFirebase("No se pudo iniciar sesión anónima. Comprueba que esté activada en Firebase Authentication.");
+});
+</script>
+
 </body>
 </html>
