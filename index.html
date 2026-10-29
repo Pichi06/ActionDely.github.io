@@ -839,7 +839,7 @@ function estadoCarro(carro) {
 }
 
 function nombreEstado(estado) {
-  if (estado === "retrasado") return "Tiempo superado";
+  if (estado === "retrasado") return "Tiempo No superado";
   if (estado === "avisar") return "Cerca del límite";
   return "En tiempo";
 }
@@ -1001,7 +1001,7 @@ function dibujarHistorial() {
       <td>${duracion(carro.limiteMinutos * 60)}</td>
       <td>
         <span class="etiqueta ${dentro ? "verde" : "rojo"}">
-          ${dentro ? "En tiempo" : "Superado"}
+          ${dentro ? "En tiempo" : "No Superado"}
         </span>
       </td>
     `;
@@ -1301,7 +1301,7 @@ $("exportar").onclick = () => {
     carro.limiteMinutos,
     carro.segundos <= carro.limiteMinutos * 60
       ? "En tiempo"
-      : "Superado"
+      : "No Superado"
   ]);
 
   const csv = [cabeceras, ...filas]
