@@ -866,10 +866,47 @@ a{color:#69bdff}
   }
 }
 
+
+/* Action Timer 2.0: acceso y controles avanzados */
+.pantalla-acceso{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 50% 15%,#183b61,#07111f 68%);}
+.caja-acceso{width:min(100%,390px);padding:30px;border:1px solid #294665;border-radius:22px;background:#0d1b2d;box-shadow:0 24px 80px #0009;color:#eaf3ff;text-align:center;}
+.marca-acceso{font-size:30px;font-weight:950;letter-spacing:2px}.marca-acceso span{display:block;font-size:12px;color:#70b5ff;letter-spacing:4px;margin-top:4px}
+.caja-acceso p{color:#9db2cc;margin:10px 0 24px}.caja-acceso label{display:block;text-align:left;font-size:12px;margin-bottom:8px;color:#c6d8ee}
+.caja-acceso input{width:100%;box-sizing:border-box;text-align:center;letter-spacing:14px;font-size:28px;font-weight:850;padding:14px;border:1px solid #355779;border-radius:12px;background:#081525;color:white;margin-bottom:14px}
+.caja-acceso button{width:100%;min-height:48px}.caja-acceso small{display:block;color:#ff8d8d;min-height:18px;margin-top:10px}
+body.bloqueado>header,body.bloqueado>main{visibility:hidden}.filtros-tablero{margin:0 0 14px}.filtros-tablero input{flex:2;min-width:190px}.filtros-tablero select{flex:1;min-width:180px}
+@media(max-width:520px){.caja-acceso{padding:24px}.filtros-tablero{display:grid;grid-template-columns:1fr}.filtros-tablero input,.filtros-tablero select{width:100%}}
+
+/* Gráficos de evolución Dely */
+.graficos-cabecera{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.graficos-cabecera h2{margin:0 0 6px}
+.graficos-cabecera select{min-width:155px}
+.graficos-kpis{margin:0 0 16px!important}
+.grafico-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.grafico-panel{min-width:0;background:#0d1b2d;border:1px solid #243a55;border-radius:15px;padding:16px;box-shadow:0 8px 24px #0002}
+.grafico-panel h3{margin:0 0 5px;font-size:15px;color:#e7eefb}
+.grafico-panel .detalle{margin:0 0 12px;color:#9db2cc;font-size:12px}
+.grafico-area{width:100%;min-height:210px;overflow:hidden}
+.grafico-area svg{display:block;width:100%;height:auto;overflow:visible}
+.grafico-vacio{height:180px;display:grid;place-items:center;color:#91a6c2;font-size:13px;text-align:center}
+.nota-graficos{margin-top:14px;color:#9db2cc;font-size:12px}
+@media(max-width:680px){.grafico-grid{grid-template-columns:1fr}.grafico-panel{padding:13px}.grafico-area{min-height:185px}.graficos-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.graficos-kpis .estadistica{padding:11px 8px}.graficos-kpis .estadistica span{font-size:10px}.graficos-kpis .estadistica strong{font-size:19px}}
+
 </style>
 </head>
 
-<body>
+<body class="bloqueado">
+
+<div id="pantallaAcceso" class="pantalla-acceso">
+  <form id="formAcceso" class="caja-acceso">
+    <div class="marca-acceso">ACTION <span>TIMER 2.0</span></div>
+    <p>Panel privado · Equipo de mando</p>
+    <label for="pinAcceso">Introduce el PIN de 4 dígitos</label>
+    <input id="pinAcceso" type="password" inputmode="numeric" autocomplete="one-time-code" maxlength="4" pattern="[0-9]{4}" placeholder="••••" required>
+    <button class="btn-rojo" type="submit">Entrar al panel</button>
+    <small id="errorPin" role="alert"></small>
+  </form>
+</div>
 
 <header>
   <div class="cabecera">
@@ -911,6 +948,10 @@ a{color:#69bdff}
     <button class="btn-rojo" id="abrirNuevo">+ Nuevo carro</button>
   </div>
 
+  <div class="filtros filtros-tablero">
+    <input id="buscarTablero" type="search" placeholder="Buscar carro o empleado…" aria-label="Buscar en tablero">
+    <select id="ordenTablero" aria-label="Ordenar carros"><option value="urgencia">Más urgentes primero</option><option value="inicio">Más antiguos primero</option><option value="empleado">Por empleado</option></select>
+  </div>
   <div class="tarjetas" id="listaActivos"></div>
 
   <div class="panel">
@@ -918,7 +959,9 @@ a{color:#69bdff}
 
     <div class="pestanas">
       <button class="pestana activa" data-pestana="historial">Historial</button>
-      <button class="pestana" data-pestana="resumen">Resumen diario</button>
+      <button class="pestana" data-pestana="resumen">Estadísticas</button>
+      <button class="pestana" data-pestana="graficos">Gráficos</button>
+      <button class="pestana" data-pestana="papelera">Papelera</button>
       <button class="pestana" data-pestana="configuracion">Empleados y tiempos</button>
     </div>
 
@@ -945,6 +988,9 @@ a{color:#69bdff}
               <th>Duración</th>
               <th>Límite</th>
               <th>Resultado</th>
+              <th>Registro mando</th>
+              <th>Reasignaciones</th>
+              <th>Editar</th>
             </tr>
           </thead>
           <tbody id="filasHistorial"></tbody>
@@ -953,6 +999,9 @@ a{color:#69bdff}
     </section>
 
     <section id="resumen" class="contenido-pestana oculto">
+      <div class="filtros">
+        <select id="periodoResumen" aria-label="Periodo de estadísticas"><option value="hoy">Hoy</option><option value="semana">Últimos 7 días</option><option value="mes">Este mes</option><option value="todo">Todo el historial</option></select>
+      </div>
       <div class="estadisticas" style="margin-top:15px">
         <div class="estadistica">
           <span>Carros completados</span>
@@ -976,11 +1025,60 @@ a{color:#69bdff}
               <th>Carros</th>
               <th>Media</th>
               <th>Dentro del límite</th>
+              <th>% puntualidad</th>
+              <th>Turno mañana / tarde</th>
             </tr>
           </thead>
           <tbody id="filasResumen"></tbody>
         </table>
       </div>
+    </section>
+
+    <section id="graficos" class="contenido-pestana oculto">
+      <div class="graficos-cabecera">
+        <div>
+          <h2>Evolución de la tienda · Dely</h2>
+          <p class="detalle">Seguimiento del rendimiento de reposición a partir de los carros finalizados y guardados en el historial.</p>
+        </div>
+        <select id="periodoGraficos" aria-label="Periodo de los gráficos">
+          <option value="7">Últimos 7 días</option>
+          <option value="30" selected>Últimos 30 días</option>
+          <option value="90">Últimos 90 días</option>
+        </select>
+      </div>
+      <div class="estadisticas graficos-kpis">
+        <div class="estadistica"><span>Carros finalizados</span><strong id="grafTotal">0</strong></div>
+        <div class="estadistica"><span>Puntualidad global</span><strong id="grafPuntualidad">—</strong></div>
+        <div class="estadistica"><span>Tiempo medio por carro</span><strong id="grafMedia">—</strong></div>
+      </div>
+      <div class="grafico-grid">
+        <article class="grafico-panel">
+          <h3>Carros completados por día</h3>
+          <p class="detalle">Volumen de trabajo finalizado en la tienda.</p>
+          <div id="grafVolumen" class="grafico-area"></div>
+        </article>
+        <article class="grafico-panel">
+          <h3>Puntualidad diaria</h3>
+          <p class="detalle">Porcentaje de carros terminados dentro del tiempo establecido.</p>
+          <div id="grafPuntual" class="grafico-area"></div>
+        </article>
+        <article class="grafico-panel">
+          <h3>Tiempo medio de finalización</h3>
+          <p class="detalle">Minutos empleados de media por carro cada día.</p>
+          <div id="grafDuracion" class="grafico-area"></div>
+        </article>
+        <article class="grafico-panel">
+          <h3>Actividad por turno</h3>
+          <p class="detalle">Comparación de carros finalizados en mañana y tarde.</p>
+          <div id="grafTurnos" class="grafico-area"></div>
+        </article>
+      </div>
+      <p id="grafNotaDatos" class="detalle nota-graficos"></p>
+    </section>
+
+    <section id="papelera" class="contenido-pestana oculto">
+      <p class="detalle">Los registros eliminados se conservan aquí para poder recuperarlos si se borran por error.</p>
+      <div class="tabla-contenedor"><table><thead><tr><th>Empleado</th><th>Fecha</th><th>Turno</th><th>Duración</th><th>Acción</th></tr></thead><tbody id="filasPapelera"></tbody></table></div>
     </section>
 
     <section id="configuracion" class="contenido-pestana oculto">
@@ -1037,7 +1135,7 @@ a{color:#69bdff}
   </div>
 
   <p class="nota-final">
-    Action Timer 2.0 · Panel de control operativo. Los cambios se guardan en este dispositivo y se sincronizan mediante la conexión Firebase existente.
+    Action Timer 2.0 · Panel de control operativo. Sincronización compartida mediante Firebase. Acceso con PIN de equipo de mando.
   </p>
 
 </main>
@@ -1146,7 +1244,8 @@ function datosIniciales() {
       {id:"t90", nombre:"1 hora y 30 minutos", minutos:90}
     ],
     activos: [],
-    historial: []
+    historial: [],
+    papelera: []
   };
 }
 
@@ -1156,10 +1255,8 @@ function cargarDatos() {
     if (!guardado) return datosIniciales();
 
     const datos = JSON.parse(guardado);
-    if (!datos.empleados || !datos.tiempos ||
-        !datos.activos || !datos.historial) {
-      return datosIniciales();
-    }
+    if (!datos.empleados || !datos.tiempos || !datos.activos || !datos.historial) return datosIniciales();
+    if (!Array.isArray(datos.papelera)) datos.papelera = [];
 
     // Corrige una sola vez las listas antiguas que tenían "Empleado 1", etc.
     // Conserva los carros activos, el historial, los tiempos y los empleados personalizados.
@@ -1200,6 +1297,23 @@ function cargarDatos() {
 let datos = cargarDatos();
 
 const $ = id => document.getElementById(id);
+
+// PIN compartido del equipo de mando. Cámbialo aquí antes de publicar la versión final.
+const PIN_MANDO = "6333";
+const CLAVE_SESION_PIN = "action_timer_pin_ok_v2";
+function desbloquearPanel(){
+  document.body.classList.remove("bloqueado");
+  const capa = $("pantallaAcceso");
+  if (capa) capa.remove();
+  sessionStorage.setItem(CLAVE_SESION_PIN,"1");
+}
+if (sessionStorage.getItem(CLAVE_SESION_PIN) === "1") desbloquearPanel();
+$("formAcceso").addEventListener("submit", e => {
+  e.preventDefault();
+  const pin = $("pinAcceso").value;
+  if (/^\d{4}$/.test(pin) && pin === PIN_MANDO) desbloquearPanel();
+  else { $("errorPin").textContent = "PIN incorrecto. Inténtalo de nuevo."; $("pinAcceso").value = ""; $("pinAcceso").focus(); }
+});
 
 function guardar() {
   localStorage.setItem(CLAVE, JSON.stringify(datos));
@@ -1297,6 +1411,8 @@ function dibujar() {
   dibujarActivos();
   dibujarHistorial();
   dibujarResumen();
+  dibujarGraficos();
+  dibujarPapelera();
   dibujarEmpleados();
   dibujarTiempos();
   actualizarSelectores();
@@ -1429,6 +1545,7 @@ function finalizarCarro(id) {
   datos.historial.push({
     ...carro,
     final,
+    finalizadoPor: "Equipo de mando",
     segundos,
     fecha: fechaHoy()
   });
@@ -1450,7 +1567,7 @@ function dibujarHistorial() {
 
   if (filas.length === 0) {
     tbody.innerHTML =
-      '<tr><td colspan="8">Todavía no hay carros terminados.</td></tr>';
+      '<tr><td colspan="11">Todavía no hay carros terminados.</td></tr>';
     return;
   }
 
@@ -1474,61 +1591,124 @@ function dibujarHistorial() {
           ${dentro ? "En tiempo" : "No Superado"}
         </span>
       </td>
+      <td>${escapar(carro.iniciadoPor || carro.finalizadoPor || "Equipo de mando")}</td>
+      <td>${Array.isArray(carro.reasignaciones) && carro.reasignaciones.length ? carro.reasignaciones.map(r => escapar(r.de)+" → "+escapar(r.a)).join("; ") : "—"}</td>
+      <td><button class="btn-gris pequeno" data-editar-historial="${escapar(carro.id || "")}">Editar</button></td>
     `;
 
     tbody.appendChild(tr);
   });
+  tbody.querySelectorAll("[data-editar-historial]").forEach(b => b.onclick = () => {
+    const registro = datos.historial.find(c => String(c.id || "") === b.dataset.editarHistorial);
+    if (!registro) return;
+    const nuevoEmpleado = prompt("Empleado:", registro.empleado || "");
+    if (nuevoEmpleado === null) return;
+    const nuevoTurno = prompt("Turno (Mañana o Tarde):", registro.turno || "Mañana");
+    if (nuevoTurno === null) return;
+    const nuevaNota = prompt("Descripción:", registro.nota || registro.nombreTiempo || "");
+    if (nuevaNota === null) return;
+    registro.empleado = nuevoEmpleado.trim() || registro.empleado;
+    registro.turno = ["Mañana","Tarde"].includes(nuevoTurno.trim()) ? nuevoTurno.trim() : registro.turno;
+    registro.nota = nuevaNota.trim();
+    registro.modificadoPor = "Equipo de mando";
+    registro.modificadoEn = ahoraISO();
+    guardar();
+  });
 }
 
 function dibujarResumen() {
-  const hoy = datos.historial.filter(
-    carro => carro.fecha === fechaHoy()
-  );
-
-  $("resTotal").textContent = hoy.length;
-
-  if (hoy.length === 0) {
-    $("resMedia").textContent = "—";
-  } else {
-    const media = hoy.reduce(
-      (total, carro) => total + carro.segundos, 0
-    ) / hoy.length;
-
-    $("resMedia").textContent = duracion(media);
-  }
-
-  $("resPuntuales").textContent = hoy.filter(
-    carro => carro.segundos <= carro.limiteMinutos * 60
-  ).length;
-
-  const empleados = [...new Set([
-    ...datos.empleados,
-    ...hoy.map(carro => carro.empleado)
-  ])];
-
+  const periodo = $("periodoResumen")?.value || "hoy";
+  const ahora = new Date();
+  const inicioSemana = new Date(ahora); inicioSemana.setDate(ahora.getDate()-6); inicioSemana.setHours(0,0,0,0);
+  const inicioMes = new Date(ahora.getFullYear(),ahora.getMonth(),1);
+  const registros = datos.historial.filter(c => {
+    const f = new Date(c.final || c.inicio);
+    if (periodo === "hoy") return c.fecha === fechaHoy();
+    if (periodo === "semana") return f >= inicioSemana;
+    if (periodo === "mes") return f >= inicioMes;
+    return true;
+  });
+  $("resTotal").textContent = registros.length;
+  const media = registros.length ? registros.reduce((s,c)=>s+Number(c.segundos||0),0)/registros.length : 0;
+  $("resMedia").textContent = registros.length ? duracion(media) : "—";
+  const puntuales = registros.filter(c => Number(c.segundos||0) <= Number(c.limiteMinutos||0)*60);
+  $("resPuntuales").textContent = registros.length ? `${puntuales.length} (${Math.round(puntuales.length/registros.length*100)}%)` : "0";
+  const empleados = [...new Set([...datos.empleados,...registros.map(c=>c.empleado)])];
   $("filasResumen").innerHTML = "";
-
   empleados.forEach(nombre => {
-    const carros = hoy.filter(carro => carro.empleado === nombre);
-
-    const media = carros.length
-      ? carros.reduce((s,c) => s + c.segundos, 0) / carros.length
-      : 0;
-
-    const puntuales = carros.filter(
-      carro => carro.segundos <= carro.limiteMinutos * 60
-    ).length;
-
+    const carros = registros.filter(c=>c.empleado===nombre);
+    const mediaEmpleado = carros.length ? carros.reduce((s,c)=>s+Number(c.segundos||0),0)/carros.length : 0;
+    const puntualesEmpleado = carros.filter(c=>Number(c.segundos||0)<=Number(c.limiteMinutos||0)*60).length;
+    const manana = carros.filter(c=>(c.turno||"") === "Mañana").length;
+    const tarde = carros.filter(c=>(c.turno||"") === "Tarde").length;
     const tr = document.createElement("tr");
-
-    tr.innerHTML = `
-      <td>${escapar(nombre)}</td>
-      <td>${carros.length}</td>
-      <td>${carros.length ? duracion(media) : "—"}</td>
-      <td>${carros.length ? puntuales + "/" + carros.length : "—"}</td>
-    `;
-
+    tr.innerHTML = `<td>${escapar(nombre)}</td><td>${carros.length}</td><td>${carros.length?duracion(mediaEmpleado):"—"}</td><td>${carros.length?puntualesEmpleado+"/"+carros.length:"—"}</td><td>${carros.length?Math.round(puntualesEmpleado/carros.length*100)+"%":"—"}</td><td>${manana} / ${tarde}</td>`;
     $("filasResumen").appendChild(tr);
+  });
+}
+
+function dibujarGraficos() {
+  const rango = Number($("periodoGraficos")?.value || 30);
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const desde = new Date(hoy); desde.setDate(hoy.getDate() - rango + 1);
+  const registros = (datos.historial || []).filter(c => {
+    const f = new Date(c.final || c.inicio);
+    return !Number.isNaN(f.getTime()) && f >= desde && f <= new Date(hoy.getTime()+86400000);
+  });
+  const dias = [];
+  for (let i=0;i<rango;i++) {
+    const d = new Date(desde); d.setDate(desde.getDate()+i);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    const lista = registros.filter(c => (c.fecha || String(c.final || "").slice(0,10)) === key);
+    const puntuales = lista.filter(c => Number(c.segundos||0) <= Number(c.limiteMinutos||0)*60).length;
+    dias.push({key, label:rango<=7?d.toLocaleDateString("es-ES",{weekday:"short"}):d.toLocaleDateString("es-ES",{day:"2-digit",month:"2-digit"}), total:lista.length, puntualidad:lista.length?puntuales/lista.length*100:null, media:lista.length?lista.reduce((a,c)=>a+Number(c.segundos||0),0)/lista.length/60:null});
+  }
+  const puntualesTotal = registros.filter(c => Number(c.segundos||0) <= Number(c.limiteMinutos||0)*60).length;
+  const mediaTotal = registros.length ? registros.reduce((a,c)=>a+Number(c.segundos||0),0)/registros.length : 0;
+  $("grafTotal").textContent = registros.length;
+  $("grafPuntualidad").textContent = registros.length ? Math.round(puntualesTotal/registros.length*100)+"%" : "—";
+  $("grafMedia").textContent = registros.length ? duracion(mediaTotal) : "—";
+  $("grafNotaDatos").textContent = registros.length
+    ? `Datos de ${registros.length} carros finalizados entre ${desde.toLocaleDateString("es-ES")} y ${hoy.toLocaleDateString("es-ES")}. Los gráficos se actualizan al sincronizar el historial de Firebase.`
+    : "Todavía no hay carros finalizados en este periodo. Cuando el equipo registre actividad, aquí aparecerá la evolución de la tienda.";
+
+  const svgGrafico = (elemento, valores, color, sufijo="", maxForzado=null) => {
+    const el = $(elemento); if (!el) return;
+    const validos = valores.map(v=>v.valor).filter(v=>v!==null && Number.isFinite(v));
+    if (!validos.length) { el.innerHTML='<div class="grafico-vacio">No hay datos suficientes para mostrar este gráfico.</div>'; return; }
+    const W=620,H=205,L=38,R=12,T=14,B=38,innerW=W-L-R,innerH=H-T-B;
+    const max = maxForzado || Math.max(1,...validos)*1.15;
+    const n=valores.length, slot=innerW/n, barW=Math.max(3,Math.min(24,slot*.58));
+    let grid="", bars="", labels="";
+    for(let j=0;j<=4;j++){const y=T+innerH*j/4;const v=max*(1-j/4);grid+=`<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#29415e" stroke-dasharray="3 5"/><text x="${L-7}" y="${y+4}" fill="#91a6c2" font-size="10" text-anchor="end">${Math.round(v)}${sufijo}</text>`;}
+    valores.forEach((d,i)=>{const x=L+i*slot+(slot-barW)/2;const v=d.valor; if(v!==null&&Number.isFinite(v)){const h=Math.max(2,v/max*innerH);const y=T+innerH-h;bars+=`<rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="4" fill="${color}" opacity=".9"><title>${d.label}: ${Number(v).toFixed(1)}${sufijo}</title></rect>`;} if(rango<=7 || i%Math.ceil(n/7)===0 || i===n-1){labels+=`<text x="${L+i*slot+slot/2}" y="${H-12}" fill="#91a6c2" font-size="10" text-anchor="middle">${d.label}</text>`;}});
+    el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico de evolución">${grid}${bars}${labels}</svg>`;
+  };
+  svgGrafico("grafVolumen",dias.map(d=>({label:d.label,valor:d.total})),"#19b7e8"," carros");
+  svgGrafico("grafPuntual",dias.map(d=>({label:d.label,valor:d.puntualidad})),"#22c58b","%",100);
+  svgGrafico("grafDuracion",dias.map(d=>({label:d.label,valor:d.media})),"#f0a43a"," min");
+  const manana=registros.filter(c=>(c.turno||"")==="Mañana").length;
+  const tarde=registros.filter(c=>(c.turno||"")==="Tarde").length;
+  const maxTurno=Math.max(1,manana,tarde);
+  const turnos=$("grafTurnos");
+  if(turnos){turnos.innerHTML=`<div style="padding:14px 4px 20px"><div style="display:flex;justify-content:space-between;color:#dce9f8;font-size:13px;margin-bottom:8px"><span>☀️ Mañana</span><strong>${manana} carros</strong></div><div style="height:14px;background:#20334b;border-radius:20px;overflow:hidden;margin-bottom:22px"><div style="height:100%;width:${manana/maxTurno*100}%;background:#f0a43a;border-radius:20px"></div></div><div style="display:flex;justify-content:space-between;color:#dce9f8;font-size:13px;margin-bottom:8px"><span>🌙 Tarde</span><strong>${tarde} carros</strong></div><div style="height:14px;background:#20334b;border-radius:20px;overflow:hidden"><div style="height:100%;width:${tarde/maxTurno*100}%;background:#19b7e8;border-radius:20px"></div></div></div>`;}
+}
+
+function dibujarPapelera() {
+  const tbody = $("filasPapelera");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+  const registros = datos.papelera || [];
+  if (!registros.length) { tbody.innerHTML = '<tr><td colspan="5">La papelera está vacía.</td></tr>'; return; }
+  registros.slice().reverse().forEach((carro, indice) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${escapar(carro.empleado || "—")}</td><td>${fechaBonita(carro.final || carro.fechaEliminacion)}</td><td>${escapar(carro.turno || "—")}</td><td>${duracion(carro.segundos || 0)}</td><td><button class="btn-gris pequeno" data-restaurar-papelera="${datos.papelera.length-1-indice}">Restaurar</button></td>`;
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll("[data-restaurar-papelera]").forEach(b => b.onclick = () => {
+    const i = Number(b.dataset.restaurarPapelera);
+    const [registro] = datos.papelera.splice(i,1);
+    if (registro) { delete registro.fechaEliminacion; datos.historial.push(registro); guardar(); }
   });
 }
 
@@ -1706,7 +1886,8 @@ $("formNuevo").onsubmit = evento => {
     turno: $("selectorTurno").value || "Mañana",
     pausado: false,
     milisegundosPausados: 0,
-    reasignaciones: []
+    reasignaciones: [],
+    iniciadoPor: "Equipo de mando"
   });
 
   $("notaCarro").value = "";
@@ -1774,6 +1955,7 @@ document.querySelectorAll("[data-pestana]").forEach(boton => {
         seccion.id !== boton.dataset.pestana
       );
     });
+    if (boton.dataset.pestana === "graficos") dibujarGraficos();
   };
 });
 
@@ -1787,7 +1969,10 @@ $("exportar").onclick = () => {
     "Hora final",
     "Duración",
     "Límite en minutos",
-    "Resultado"
+    "Resultado",
+    "Iniciado por",
+    "Finalizado por",
+    "Reasignaciones"
   ];
 
   const filas = datos.historial.map(carro => [
@@ -1801,7 +1986,10 @@ $("exportar").onclick = () => {
     carro.limiteMinutos,
     carro.segundos <= carro.limiteMinutos * 60
       ? "En tiempo"
-      : "No Superado"
+      : "No Superado",
+    carro.iniciadoPor || "Equipo de mando",
+    carro.finalizadoPor || "Equipo de mando",
+    (carro.reasignaciones || []).map(r => `${r.de} -> ${r.a} (${horaBonita(r.fecha)})`).join(" | ")
   ]);
 
   if (window.XLSX) {
@@ -1830,6 +2018,8 @@ $("exportar").onclick = () => {
 
 $("borrarHistorial").onclick = () => {
   if (confirm("¿Seguro que quieres borrar todo el historial?")) {
+    datos.papelera = Array.isArray(datos.papelera) ? datos.papelera : [];
+    datos.historial.forEach(registro => datos.papelera.push({...registro,fechaEliminacion:ahoraISO()}));
     datos.historial = [];
     guardar();
   }
@@ -1837,6 +2027,9 @@ $("borrarHistorial").onclick = () => {
 
 // Filtros del historial
 ["filtroHistorial","fechaHistorial","turnoHistorial"].forEach(id => $(id).addEventListener("input", dibujarHistorial));
+["buscarTablero","ordenTablero"].forEach(id => $(id).addEventListener("input", dibujarActivos));
+$("periodoResumen").addEventListener("change", dibujarResumen);
+$("periodoGraficos").addEventListener("change", dibujarGraficos);
 
 // Sonido local por dispositivo: se activa mediante un clic del usuario.
 let sonidoActivo = localStorage.getItem("action_timer_sonido") === "1";
@@ -1934,6 +2127,7 @@ onAuthStateChanged(auth, usuario => {
         if (remotos && Array.isArray(remotos.empleados) &&
             Array.isArray(remotos.tiempos) && Array.isArray(remotos.activos) &&
             Array.isArray(remotos.historial)) {
+          if (!Array.isArray(remotos.papelera)) remotos.papelera = [];
           datos = remotos;
           localStorage.setItem(CLAVE, JSON.stringify(datos));
         }
