@@ -813,8 +813,9 @@ a{color:#69bdff}
 .btn-iniciar-carro span{margin-right:6px}
 @media(max-width:440px){.modal-carro-contenido{padding:13px!important}.bloque-carro{padding:12px}.presets-tiempo{grid-template-columns:repeat(3,minmax(0,1fr))}.acciones-carro{flex-direction:column-reverse}.acciones-carro button{width:100%}}
 
-/* Corrección móvil: el formulario del diálogo debe poder desplazarse completo */
-.modal-carro{
+/* Corrección móvil: el formulario del diálogo debe poder desplazarse completo.
+   Solo se muestra como flex cuando el diálogo está abierto. */
+.modal-carro[open]{
   display:flex;
   flex-direction:column;
   max-height:calc(100vh - 24px);
