@@ -812,6 +812,59 @@ a{color:#69bdff}
 .btn-iniciar-carro{flex:1;background:linear-gradient(110deg,#287fe0,#1760b5)!important;box-shadow:0 8px 22px #1769c044}
 .btn-iniciar-carro span{margin-right:6px}
 @media(max-width:440px){.modal-carro-contenido{padding:13px!important}.bloque-carro{padding:12px}.presets-tiempo{grid-template-columns:repeat(3,minmax(0,1fr))}.acciones-carro{flex-direction:column-reverse}.acciones-carro button{width:100%}}
+
+/* Corrección móvil: el formulario del diálogo debe poder desplazarse completo */
+.modal-carro{
+  display:flex;
+  flex-direction:column;
+  max-height:calc(100vh - 24px);
+  max-height:calc(100dvh - 24px);
+  min-height:0;
+}
+.modal-carro-cabecera{
+  flex:0 0 auto;
+}
+.modal-carro-contenido{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:calc(20px + env(safe-area-inset-bottom))!important;
+}
+.modal-carro-contenido form{
+  min-height:min-content;
+}
+.modal-carro .acciones-carro{
+  position:sticky;
+  bottom:0;
+  z-index:2;
+  padding:12px 0 calc(4px + env(safe-area-inset-bottom));
+  margin-top:12px;
+  background:#0d1b2d;
+}
+@media(max-width:520px){
+  .modal-carro{
+    width:calc(100% - 16px);
+    max-height:calc(100vh - 16px);
+    max-height:calc(100dvh - 16px);
+    margin:auto;
+    border-radius:16px;
+  }
+  .modal-carro-cabecera{padding:14px 16px!important}
+  .modal-carro-contenido{padding:12px!important}
+  .modal-carro .acciones-carro{
+    flex-direction:column-reverse;
+    gap:8px;
+    padding-top:10px;
+  }
+  .modal-carro .acciones-carro button{
+    width:100%;
+    min-height:48px;
+  }
+}
+
 </style>
 </head>
 
